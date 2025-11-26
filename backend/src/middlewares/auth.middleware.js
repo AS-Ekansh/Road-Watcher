@@ -6,12 +6,12 @@ export const auth = async (req, res, next) => {
   try {
     const token = req.cookies.accessToken || req.headers.authorization?.split(" ")[1];
 
-    if (!token) throw new ApiError(401, "Authentication required");
+    if (!token) return res.status(401).json(new ApiError(401, "Authentication required"));
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const user = await User.findById(decoded.id).select("-password");
-    if (!user) throw new ApiError(401, "Invalid token");
+    if (!user) return res.status(401).json(new ApiError(401, "Invalid token"));
 
     req.user = user;
     next();
@@ -22,7 +22,7 @@ export const auth = async (req, res, next) => {
 
 export const isAdmin = (req, res, next) => {
   if (req.user.role !== "admin") {
-    throw new ApiError(403, "Admin access only");
+    return res.status(401).json(new ApiError(403, "Admin access only"));
   }
   next();
 };

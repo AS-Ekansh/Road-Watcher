@@ -16,12 +16,12 @@ export const createReport = async (req, res) => {
 
 export const getAllReports = async (req, res) => {
   const reports = await Report.find().populate("user", "full_name email");
-  res.json(new ApiResponse(200, reports));
+  return res.json(new ApiResponse(200, reports));
 };
 
 export const getMyReports = async (req, res) => {
   const reports = await Report.find({ user: req.user._id });
-  res.json(new ApiResponse(200, reports));
+  return res.json(new ApiResponse(200, reports));
 };
 
 export const updateReportStatus = async (req, res) => {
@@ -30,5 +30,5 @@ export const updateReportStatus = async (req, res) => {
     { ...req.body, solved_by: req.user._id, solved_at: new Date() },
     { new: true }
   );
-  res.json(new ApiResponse(200, updated, "Report updated"));
+  return res.json(new ApiResponse(200, updated, "Report updated"));
 };
