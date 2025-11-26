@@ -6,15 +6,38 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  const login = async (email, password) => {
+const login = async (email, password) => {
+  try {
     const res = await axios.post("/auth/login", { email, password });
-    setUser(res.data.data.user);
-  };
 
-  const register = async (form) => {
-    const res = await axios.post("/auth/register", form);
+    if (!res.data?.data?.user) {
+      throw new Error("Invalid login response");
+    }
+
     setUser(res.data.data.user);
-  };
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.response?.data?.message || "Server error" };
+  }
+};
+
+
+const register = async (form) => {
+  try {
+    const res = await axios.post("/auth/register", form);
+
+    if (!res.data?.data?.user) {
+      throw new Error("Invalid response from server");
+    }
+
+    setUser(res.data.data.user);
+    return { success: true };
+  } catch (err) {
+    console.error("Register error:", err);
+    return { success: false, error: err.response?.data?.message || "Server error" };
+  }
+};
+
 
   const logout = async () => {
     await axios.post("/auth/logout", {}, { withCredentials: true });
