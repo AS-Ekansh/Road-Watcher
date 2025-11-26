@@ -27,16 +27,19 @@ const register = async (form) => {
     const res = await axios.post("/auth/register", form);
 
     if (!res.data?.data?.user) {
-      throw new Error("Invalid response from server");
+      return { success: false, error: "Invalid server response" };
     }
 
     setUser(res.data.data.user);
     return { success: true };
   } catch (err) {
-    console.error("Register error:", err);
-    return { success: false, error: err.response?.data?.message || "Server error" };
+    return {
+      success: false,
+      error: err.response?.data?.message || "Server error",
+    };
   }
 };
+
 
 
   const logout = async () => {

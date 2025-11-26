@@ -5,6 +5,15 @@ import Footer from "../components/Footer";
 export default function Dashboard() {
   const { user } = useAuth();
 
+  // Safely handle missing user
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-neutral-950 text-white flex items-center justify-center">
+        <h2 className="text-xl text-gray-300">Loading...</h2>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-neutral-950 text-white p-6 flex flex-col justify-between">
       <div>
@@ -27,7 +36,7 @@ export default function Dashboard() {
             My Reports
           </Link>
 
-          {user.role === "admin" && (
+          {user?.role === "admin" && (
             <Link
               to="/admin/reports"
               className="p-4 rounded-xl shadow bg-gradient-to-r from-purple-400 to-indigo-400 text-white font-semibold hover:opacity-90"
