@@ -34,10 +34,10 @@ export const register = async (req, res) => {
     const token = generateToken(user._id);
 
     return res
-      .cookie("accessToken", token, cookieOptions)
-      .json(
-        new ApiResponse(201, { user, token }, "Registered successfully")
-      );
+  .cookie("accessToken", token, cookieOptions)
+  .status(201)
+  .json({ message: "Registered", user, token });
+
 
   } catch (err) {
     console.error("Register error:", err);
