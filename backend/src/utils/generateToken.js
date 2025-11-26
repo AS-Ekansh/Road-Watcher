@@ -9,17 +9,14 @@ const generateToken = (userId) => {
     )
 }
 
-// const cookieOptions = {
-//   httpOnly: true,
-//   secure: process.env.NODE_ENV === "production",
-//   sameSite: "none",
-//   maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-// };
-const cookieOptions = {
+const isProd = process.env.NODE_ENV === "production";
+
+export const cookieOptions = {
   httpOnly: true,
-  secure: false,        // ❗ Must be false for localhost
-  sameSite: "lax",      // ❗ Must NOT be "none" on localhost
-  maxAge: 7 * 24 * 60 * 60 * 1000
+  secure: isProd,           // true on Render (HTTPS), false on localhost
+  sameSite: isProd ? "none" : "lax",  // must be "none" on Vercel → Render
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+  path: "/"
 };
 
 
