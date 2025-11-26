@@ -10,8 +10,7 @@ const generateToken = (userId) => {
 }
 
 const isProd = process.env.NODE_ENV === "production";
-
-export const cookieOptions = {
+const cookieOptions = {
   httpOnly: true,
   secure: isProd,           // true on Render (HTTPS), false on localhost
   sameSite: isProd ? "none" : "lax",  // must be "none" on Vercel → Render
