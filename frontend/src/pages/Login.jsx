@@ -2,11 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Footer from "../components/Footer";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const { login } = useAuth();
   const nav = useNavigate();
@@ -33,12 +35,22 @@ export default function Login() {
             placeholder="Email"
             onChange={(e) => setEmail(e.target.value)}
           />
-          <input
-            type="password"
-            className="w-full p-3 mb-6 rounded bg-neutral-800 border border-neutral-700 text-gray-200"
-            placeholder="Password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
+
+          {/* Password + Eye Toggle */}
+          <div className="relative mb-6">
+            <input
+              type={showPassword ? "text" : "password"}
+              className="w-full p-3 rounded bg-neutral-800 border border-neutral-700 text-gray-200"
+              placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <div
+              className="absolute right-3 top-3 cursor-pointer text-gray-300"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </div>
+          </div>
 
           <button
             disabled={loading}
