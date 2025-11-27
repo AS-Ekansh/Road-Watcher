@@ -4,20 +4,6 @@ import { Profile } from "../models/Profile.model.js";
 import { sendSuccess, sendError } from "../utils/sendResponse.js";
 import { generateToken, cookieOptions } from "../utils/generateToken.js";
 
-// auth.controller.js (replace register with this)
-import bcrypt from "bcryptjs";
-import { User } from "../models/User.model.js";
-import { Profile } from "../models/Profile.model.js";
-import { sendSuccess, sendError } from "../utils/sendResponse.js";
-import { generateToken, cookieOptions } from "../utils/generateToken.js";
-
-/**
- * Robust register:
- * - validates required fields
- * - creates user
- * - tries to create profile; if profile creation fails, deletes the user (rollback)
- * - sets cookie and returns 201 on success
- */
 export const register = async (req, res) => {
   try {
     const { full_name, email, phone, password } = req.body;
