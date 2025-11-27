@@ -1,16 +1,27 @@
 import { Profile } from "../models/Profile.model.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
+import { sendSuccess, sendError } from "../utils/sendResponse.js";
 
 export const getMyProfile = async (req, res) => {
-  const profile = await Profile.findOne({ user: req.user._id });
-  return res.json(new ApiResponse(200, profile));
+  try {
+    const profile = await Profile.findOne({ user: req.user._id });
+    return sendSuccess(res, 200, "Profile fetched", profile);
+  } catch (err) {
+    console.error(err);
+    return sendError(res, 500, "Failed to fetch profile");
+  }
 };
 
 export const updateMyProfile = async (req, res) => {
-  const updated = await Profile.findOneAndUpdate(
-    { user: req.user._id },
-    req.body,
-    { new: true }
-  );
-  return res.json(new ApiResponse(200, updated, "Profile updated"));
+  try {
+    const updated = await Profile.findOneAndUpdate(
+      { user: req.user._id },
+      req.body,
+      { new: true }
+    );
+
+    return sendSuccess(res, 200, "Profile updated", updated);
+  } catch (err) {
+    console.error(err);
+    return sendError(res, 500, "Failed to update profile");
+  }
 };

@@ -1,9 +1,8 @@
 import bcrypt from "bcryptjs";
 import { User } from "../models/User.model.js";
 import { Profile } from "../models/Profile.model.js";
-import { ApiError } from "../utils/ApiError.js";  
-import { ApiResponse } from "../utils/ApiResponse.js"; 
-import { generateToken, cookieOptions } from "../utils/generateToken.js"; 
+import { sendSuccess, sendError } from "../utils/sendResponse.js";
+import { generateToken, cookieOptions } from "../utils/generateToken.js";
 
 export const register = async (req, res) => {
   try {
@@ -11,10 +10,7 @@ export const register = async (req, res) => {
 
     const exists = await User.findOne({ email });
     if (exists) {
-      return res.status(409).json({
-        status: 409,
-        message: "Email already registered"
-      });
+      return sendError(res, 409, "Email already registered");
     }
 
     const hashedPass = await bcrypt.hash(password, 10);
@@ -34,22 +30,16 @@ export const register = async (req, res) => {
 
     const token = generateToken(user._id);
 
-    return res
-      .cookie("accessToken", token, cookieOptions)
-      .status(201)
-      .json({
-        status: 201,
-        message: "Registered",
-        user,
-        token
-      });
+    res.cookie("accessToken", token, cookieOptions);
+
+    return sendSuccess(res, 201, "User registered successfully", {
+      user,
+      token,
+    });
 
   } catch (err) {
     console.error("Register error:", err);
-    return res.status(500).json({
-      status: 500,
-      message: "Internal server error"
-    });
+    return sendError(res, 500, "Internal server error");
   }
 };
 
@@ -58,42 +48,24 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({
-        status: 404,
-        message: "User not found"
-      });
-    }
+    if (!user) return sendError(res, 404, "User not found");
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match) {
-      return res.status(401).json({
-        status: 401,
-        message: "Incorrect password"
-      });
-    }
+    if (!match) return sendError(res, 401, "Incorrect password");
 
     const token = generateToken(user._id);
 
-    return res
-      .cookie("accessToken", token, cookieOptions)
-      .json({
-        status: 200,
-        message: "Login successful",
-        user,
-        token
-      });
+    res.cookie("accessToken", token, cookieOptions);
+
+    return sendSuccess(res, 200, "Login successful", { user, token });
 
   } catch (err) {
     console.error("Login error:", err);
-    return res.status(500).json({
-      status: 500,
-      message: "Internal server error"
-    });
+    return sendError(res, 500, "Internal server error");
   }
 };
 
-
 export const logout = async (req, res) => {
-  return res.clearCookie("accessToken").json(new ApiResponse(200, {}, "Logged out"));
+  res.clearCookie("accessToken");
+  return sendSuccess(res, 200, "Logged out successfully");
 };
